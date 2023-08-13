@@ -6,7 +6,7 @@
 */
 
 #include "dht.h"														// include the dht driver
-#include <stdio.h>																								// for printf
+#include <stdio.h>														// for printf
 #include <unistd.h>														// used for sleep
 #include <cstdlib>														// for std::system
 
@@ -18,43 +18,31 @@ void clear_screen(){
 #endif
 }
 
-DHT sensor1(4,22);														// load class DHT11 as sensor1 with pin number 4
-DHT sensor2(22,11);														// load class DHT11 as sensor2 with pin number 4
+DHT sensor1(4,DHT11);													// load class DHT11 as sensor1 with pin number 4
 
 int main(){															
-	float temp;															// create float vatiable temp for the temperature
-	float humi;															// create float variable humi for the humidity
-    
+	float temp1=0.0;
+	float humi1=0.0;
+	bool ok1=false;
+	    
 	while (1){		
 		clear_screen();													// clear the console
 
-		if (sensor1.Read()==1) {											// if read Sensor1 data into array is okay
-			temp=sensor1.Get_Temp();										// get temperature from sensor and save it in temp
-			humi=sensor1.Get_Humi();										// get huminity from sensor and save it in humi
-			
-			printf("Sensor1:\n");
-			printf("Themperatur:\t%.1f°C\n",temp);							// print temperature as float
-			printf("Luftfeuchte:\t%.1f%%\n",humi);							// print humidity as float
+		if (sensor1.Read()==1) {										// if read Sensor1 data into array is okay
+			temp1=sensor1.Get_Temp();									// get temperature from sensor and save it in temp
+			humi1=sensor1.Get_Humi();									// get huminity from sensor and save it in humi
+			ok1=true;													// set ok to true
 		}
-		else {
-			printf("Sensor1: error\n\n");	
-		}
-		if (sensor2.Read()==1) {											// if read Sensor1 data into array is okay
-			temp=sensor2.Get_Temp();										// get temperature from sensor and save it in temp
-			humi=sensor2.Get_Humi();										// get huminity from sensor and save it in humi
-			
-			printf("\n\nSensor2:\n");										// print temperature as float
-			printf("Themperatur:\t%.1f°C\n",temp);							// print temperature as float
-			printf("Luftfeuchte:\t%.1f%%\n",humi);							// print humidity as float
-		}
-		else {
-			printf("\nSensor2: error\n\n");	
-		}
-		sleep(30);
+		printf("Messwert:\tDHT%d:\n",DHT11);							// Print console output
+		printf("--------------------------------------\n");
+		printf("Temperatur:\t%.1f°C\n",temp1);
+		printf("Luftfeuchte:\t%.1f%%\n",humi1);
+		printf("Status:\t\t%d\n",ok1);
+		ok1=false;														// set ok to false
+		sleep(10);
 	}
 
 	
 	sensor1.Terminate();												// close connection to sensor and terminate pigpio
-	sensor2.Terminate();
-	return EXIT_SUCCESS;
+	return EXIT_SUCCESS;												// return exit_success
 }
